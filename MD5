@@ -1,0 +1,17 @@
+ad540c570f0b7aa3afa503685c07a731 *DESCRIPTION
+11ad5aff5f25e77aee4eae39e62d92f9 *NAMESPACE
+1c5b9ef1967e9ed27404be3bcbbf5df0 *NEWS.md
+c633f106613c051cc0fd7a9c7f046ea9 *R/American-Options.R
+d07faa17aa501a19e386f8dbcec8bf1b *R/GBM-Simulate.R
+16462bef0db64f9831a406e959f0b906 *R/Real-Options-OF.R
+301181fb9054714d0445b51d0adfcd4f *R/Real-Options.R
+92a7a5a871d416ce07275568b66c388e *README.md
+ea9b7de9c554ecf7197b585b62d04295 *build/vignette.rds
+a3036b66ff7ba4946bdaae1550017cb6 *inst/doc/LSMRealOptions.R
+b7556e57821fe3316446b74935c57e88 *inst/doc/LSMRealOptions.Rmd
+14f54e3c2a3730fd9eb3c0f319dc9b3a *inst/doc/LSMRealOptions.html
+d09efbef5d644b526e4780229cb612da *man/GBM.Simulate.Rd
+c8d26cab412fa2893c6714547c12901b *man/LSM.AmericanOption.Rd
+ae525cc69a471283c43ea362056db327 *man/LSM.RealOption.OF.Rd
+d9f9c048258078cf5dcf49c88bfdf0c3 *man/LSM.RealOption.Rd
+b7556e57821fe3316446b74935c57e88 *vignettes/LSMRealOptions.Rmd
