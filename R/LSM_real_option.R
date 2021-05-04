@@ -1,18 +1,18 @@
 
 
-#'Value Capital Investment Projects Through Least-Squares Monte Carlo (LSM) Simulation:
+#'Value capital investment projects through least-squares Monte Carlo (LSM) simulation:
 #' @description
 #' Given a set of state variables and associated net cash flows for an investment project simulated through Monte Carlo simulation,
 #' solve for the real option value of a capital investment project through the least-squares Monte Carlo simulation method.
 #'
-#' @param state.variables \code{matrix} or \code{array}. The simulated states of the underlying stochastic variables. The first dimension corresponds to the simulated values
+#' @param state_variables \code{matrix} or \code{array}. The simulated states of the underlying stochastic variables. The first dimension corresponds to the simulated values
 #' of the state variables at each discrete observation point. The second dimension corresponds to each individual simulation of the state variable. The third dimension
 #' corresponds to each state variable considered.
 #' @param NCF The net cash flows resulting from operating the underlying capital investment project for one discrete time step at the current simulated values of the state variables.
 #' Each column corresponds to a simulated price path of underlying stochastic variables, and each row the net cash flows at a discrete time point for each simulated path.
-#' The dimensions of object 'NCF' must match the first two dimensions of the object passed to the 'state.variables' argument.
+#' The dimensions of object 'NCF' must match the first two dimensions of the object passed to the 'state_variables' argument.
 #' @param CAPEX \code{numeric} or \code{vector} object. The initial capital investment of the project. This value can be either constant or time dependent. When the 'CAPEX' argument
-#' is time dependent, it must be a vector object of length equal to the number of discrete observations of the simulations (i.e. the number of rows of both 'state.variables' and 'NCF')
+#' is time dependent, it must be a vector object of length equal to the number of discrete observations of the simulations (i.e. the number of rows of both 'state_variables' and 'NCF')
 #' @param dt Constant, discrete time step of simulated observations
 #' @param rf The annual risk-free interest rate
 #' @param construction An \code{integer} corresponding to the number of periods of construction of the underlying asset. The construction time represents the time between
@@ -20,16 +20,16 @@
 #' @param orthogonal \code{character}. The orthogonal polynomial used to develop basis functions that estimate the continuation value in the LSM simulation method.
 #' \code{orthogonal} arguments available are: "Power", "Laguerre", "Jacobi", "Legendre", "Chebyshev", "Hermite". See \bold{details}.
 #' @param degree The number of orthogonal polynomials used in the least-squares fit. See \bold{details}.
-#' @param cross.product \code{logical}. Should a cross product of state variables be considered? Relevant only when the number of state variables
+#' @param cross_product \code{logical}. Should a cross product of state variables be considered? Relevant only when the number of state variables
 #' is greater than one
 #' @param verbose \code{logical}. Should additional information be output? See \bold{values}.
 #' @param debugging \code{logical} Should additional simulation information be output? See \bold{values}.
 #'
 #' @details
 #'
-#'The \code{LSM.RealOption} function provides an implementation of the least-squares Monte Carlo (LSM) simulation approach to numerically approximate
+#'The \code{LSM_real_option} function provides an implementation of the least-squares Monte Carlo (LSM) simulation approach to numerically approximate
 #'the value of capital investment projects considering the flexibility of timing of investment under stochastically evolving uncertainty. The function provides flexibility in the stochastic behavior of the underlying uncertainty, with simulated values
-#'of state variables provided within the \code{state.variables} argument. The \code{LSM.RealOption} function also provides analysis into the expected investment timing, probability, and the expected payback period of the project.
+#'of state variables provided within the \code{state_variables} argument. The \code{LSM_real_option} function also provides analysis into the expected investment timing, probability, and the expected payback period of the project.
 #'
 #'\bold{Least-Squares Monte Carlo Simulation:}
 #'
@@ -48,12 +48,12 @@
 #'underlying, stochastically evolving uncertainty has revealed itself. Real options analysis treats investment into capital investment projects as an optimal stopping problem, optimizing the timing of investment that maximizes the payoffs of investment under underlying stochastic uncertainty.
 #'Real options analysis is also capable of evaluating the critical value of underlying state variables at which immediate investment into a project is optimal. See Dixit and Pindyck (1994) for more details of real options analysis.
 #'
-#'The \code{LSM.RealOption} function considers the option to invest into a capital investment project within a finite forecasting horizon. Investment into the project results in accruing all future net cash flows (NCF) until the end of the forecasting horizon at the cost of the capital expenditure (CAPEX).
+#'The \code{LSM_real_option} function considers the option to invest into a capital investment project within a finite forecasting horizon. Investment into the project results in accruing all future net cash flows (NCF) until the end of the forecasting horizon at the cost of the capital expenditure (CAPEX).
 #'Immediate investment into a capital investment project is optimal when the waiting option value (WOV) is zero. Critical values of state variables at which immediate investment in optimal can therefore be obtained through finding the root of the WOV.
 #'
-#'The primary difference between the \code{LSM.RealOption} and \code{LSM.AmericanOption} function is the way in which they evaluate the payoff of
+#'The primary difference between the \code{LSM_real_option} and \code{LSM.AmericanOption} function is the way in which they evaluate the payoff of
 #'exercise of the American-style option. The \code{LSM.AmericanOption} function considers the payoff of exercise to be a one time payoff (i.e. buying or selling the security in a vanilla call or put option) corresponding to the respective payoff argument.
-#'The \code{LSM.RealOption} function instead, at each discrete time period, for each simulated price path, compares the sum of all remaining discounted cash flows that are accrued following immediate investment into
+#'The \code{LSM_real_option} function instead, at each discrete time period, for each simulated price path, compares the sum of all remaining discounted cash flows that are accrued following immediate investment into
 #'a project to the end of the forecasting horizon with the expected value of delaying investment. This is is known as the 'running present value' (RPV) of the project, which is the discretised present value of all
 #'future cash flows of the project. The RPV of a project increases as the size of the discrete time step decreases, highlighting the need
 #'for small discrete time steps to accurately value investment projects. This is due to the discounting effect of discounting larger
@@ -68,16 +68,16 @@
 #'Longstaff and Schwartz (2001) state that as the conditional expectation of the continuation value belongs to a Hilbert space,
 #'it can be represented by a combination of orthogonal basis functions. Increasing the number of stochastic state variables
 #'therefore increases the number of required basis functions exponentially. The orthogonal polynomials available in the
-#'\code{LSM.RealOptions} package are: Laguerre, Jacobi, Legendre (spherical), Hermite (probabilistic), Chebyshev (of the first kind).
+#'\code{LSM_real_options} package are: Laguerre, Jacobi, Legendre (spherical), Hermite (probabilistic), Chebyshev (of the first kind).
 #'The simple powers of state variables is further available. Explicit expressions of each of these orthogonal polynomials are
 #'available within the textbook of Abramowitz and Stegun (1965).
 #'
 #' @return
 #'
-#'The \code{LSM.RealOption} function returns a \code{list} object. The number of objects returned in the list is dependent upon the \code{logical}
+#'The \code{LSM_real_option} function returns a \code{list} object. The number of objects returned in the list is dependent upon the \code{logical}
 #'values of arguments \code{verbose} and \code{debugging}.
 #'
-#'\code{LSM.RealOption} by default returns 3 objects within the \code{list} class object:
+#'\code{LSM_real_option} by default returns 3 objects within the \code{list} class object:
 #'
 #'\tabular{ll}{
 #' \code{ROV} \tab 'Real Option value': The value of the capital investment project considering flexibility in the timing of investment.  \cr
@@ -122,18 +122,18 @@
 #'# Geometric Brownian Motion stochastic process:
 #'
 #'## Step 1 - Simulate asset prices:
-#'AssetPrices <- GBM.Simulate(n = 100, t = 10, mu = 0.05,
+#'asset_prices <- GBM_simulate(n = 100, t = 10, mu = 0.05,
 #'                          sigma = 0.2, S0 = 100, dt = 1/2)
 #'
 #'## Step 2 - Perform Real Option Analysis (ROA):
-#'ROA <- LSM.RealOption(state.variables = AssetPrices,
-#'                      NCF = AssetPrices - 100,
+#'ROA <- LSM_real_option(state_variables = asset_prices,
+#'                      NCF = asset_prices - 100,
 #'                      CAPEX = 1000,
 #'                      dt = 1/2,
 #'                      rf = 0.05)
 #' @export
-LSM.RealOption <- function(state.variables, NCF, CAPEX, dt, rf, construction = 0,
-                           orthogonal = "Laguerre", degree = 9, cross.product = TRUE,
+LSM_real_option <- function(state_variables, NCF, CAPEX, dt, rf, construction = 0,
+                           orthogonal = "Laguerre", degree = 9, cross_product = TRUE,
                            verbose = FALSE, debugging = FALSE){
 
   ###FUNCTION DEFINITIONS:
@@ -180,7 +180,7 @@ LSM.RealOption <- function(state.variables, NCF, CAPEX, dt, rf, construction = 0
   }
 
   ###Estimated Continuation Values:
-  Continuation_value <- function(profit, t, Continuation_value, state.variables_t, orthogonal, degree, cross.product){
+  continuation_value_calc <- function(profit, t, continuation_value, state_variables_t, orthogonal, degree, cross_product){
 
     #We only consider the invest / delay investment decision for price paths that are in the money (ie. positive NPV):
     ITM <- which(profit > 0)
@@ -189,38 +189,38 @@ LSM.RealOption <- function(state.variables, NCF, CAPEX, dt, rf, construction = 0
     #Only regress paths In the money (ITM):
     if(ITM_length>0){
 
-      if(is.vector(state.variables_t)){
-        state.variables_t_ITM <- matrix(state.variables_t[ITM])
-        state.variables.ncol <- 1
+      if(is.vector(state_variables_t)){
+        state_variables_t_ITM <- matrix(state_variables_t[ITM])
+        state_variables.ncol <- 1
       } else {
-        state.variables.ncol <- ncol(state.variables_t)
-        state.variables_t_ITM <- matrix(state.variables_t[ITM,], ncol = state.variables.ncol)
+        state_variables.ncol <- ncol(state_variables_t)
+        state_variables_t_ITM <- matrix(state_variables_t[ITM,], ncol = state_variables.ncol)
       }
 
-      regression.matrix <- matrix(0, nrow = ITM_length, ncol = (1 + state.variables.ncol*degree + ifelse(cross.product, factorial(state.variables.ncol - 1),0)))
-      index <- state.variables.ncol+1
-      regression.matrix[,1:index] <- c(Continuation_value[ITM], state.variables_t_ITM)
+      regression.matrix <- matrix(0, nrow = ITM_length, ncol = (1 + state_variables.ncol*degree + ifelse(cross_product, factorial(state_variables.ncol - 1),0)))
+      index <- state_variables.ncol+1
+      regression.matrix[,1:index] <- c(continuation_value[ITM], state_variables_t_ITM)
       index <- index + 1
 
       ##The Independent_variables includes the actual values as well as their polynomial/orthogonal weights:
       Regression_data <- data.frame(matrix(0, nrow = ITM_length,
-                                          ncol = (state.variables.ncol*degree + ifelse(cross.product, factorial(state.variables.ncol - 1),0))), state.variables_t_ITM,
-                                   dependent_variable = Continuation_value[ITM])
+                                          ncol = (state_variables.ncol*degree + ifelse(cross_product, factorial(state_variables.ncol - 1),0))), state_variables_t_ITM,
+                                   dependent_variable = continuation_value[ITM])
 
       index <- 1
       #Basis Functions:
-      for(i in 1:state.variables.ncol){
+      for(i in 1:state_variables.ncol){
         for(n in 1:degree){
-          Regression_data[,index] <- orthogonal_weight(n, state.variables_t_ITM[,i], orthogonal)
+          Regression_data[,index] <- orthogonal_weight(n, state_variables_t_ITM[,i], orthogonal)
           index <- index + 1
         }
       }
 
       #Cross Product of state vectors:
-      if(cross.product){
-        for(i in 1:(state.variables.ncol-1)){
-          for(j in (i + 1):state.variables.ncol){
-            Regression_data[,index] <- state.variables_t_ITM[,i] * state.variables_t_ITM[,j]
+      if(cross_product && state_variables.ncol > 1){
+        for(i in 1:(state_variables.ncol-1)){
+          for(j in (i + 1):state_variables.ncol){
+            Regression_data[,index] <- state_variables_t_ITM[,i] * state_variables_t_ITM[,j]
             index <- index + 1
           }}
       }
@@ -229,9 +229,9 @@ LSM.RealOption <- function(state.variables, NCF, CAPEX, dt, rf, construction = 0
 
       #if(any(is.na(LSM_regression$coefficients))) print("There are NA's present in the (complex) regression!")
       ##Assign fitted values
-      Continuation_value[ITM] <- LSM_regression$fitted.values
+      continuation_value[ITM] <- LSM_regression$fitted.values
     }
-    return(Continuation_value)
+    return(continuation_value)
   }
   #------------------------------------------------------------------------------
 
@@ -239,23 +239,23 @@ LSM.RealOption <- function(state.variables, NCF, CAPEX, dt, rf, construction = 0
   r <- rf * dt
 
   #Number of discrete time periods:
-  nperiods <- dim(state.variables)[1]
+  nperiods <- dim(state_variables)[1]
   #Number of simulations:
-  G <- dim(state.variables)[2]
+  G <- dim(state_variables)[2]
 
   ## Error Catching:
-  if(length(CAPEX) > 1 && length(CAPEX) != nperiods) stop("length of object 'CAPEX' does not equal 1 or dim(state.variables)[2]!")
+  if(length(CAPEX) > 1 && length(CAPEX) != nperiods) stop("length of object 'CAPEX' does not equal 1 or dim(state_variables)[2]!")
   if(construction %% 1 > 0) stop("object 'construction' must be type 'integer'!")
-  if(nrow(state.variables) != nrow(NCF)) stop("Dimensions of object 'state.variables' does not match 'NCF'!")
+  if(nrow(state_variables) != nrow(NCF)) stop("Dimensions of object 'state_variables' does not match 'NCF'!")
 
-  if(any(class(state.variables) == "matrix")) state.variables <- array(state.variables, dim = c(nrow(state.variables), ncol(state.variables), 1))
+  if(any(class(state_variables) == "matrix")) state_variables <- array(state_variables, dim = c(nrow(state_variables), ncol(state_variables), 1))
 
   if(!(orthogonal %in% c("Power", "Laguerre", "Jacobi", "Legendre", "Chebyshev", "Hermite"))){
     stop("Invalid orthogonal argument! 'orthogonal' must be Power, Laguerre, Jacobi, Legendre, Chebyshev or Hermite")
   }
 
   ## If there's only 1 state variable, we cannot perform cross products
-  if(dim(state.variables)[3] == 1) cross.product <- FALSE
+  if(dim(state_variables)[3] == 1) cross_product <- FALSE
 
   if(debugging) verbose <- TRUE
 
@@ -268,7 +268,7 @@ LSM.RealOption <- function(state.variables, NCF, CAPEX, dt, rf, construction = 0
   Immediate_profit  <- matrix(0, nrow = nperiods, ncol = G)
 
   #Expected value of waiting to invest. Compared with Immediate Profit to make investment decisions through dynamic programming.
-  Investment_Continuation_value <- rep(0, G)
+  investment_continuation_value <- rep(0, G)
 
   #Option value of project, given that you can either delay investment or invest into an operational project:
   X_t <- rep(0, G)
@@ -299,13 +299,13 @@ LSM.RealOption <- function(state.variables, NCF, CAPEX, dt, rf, construction = 0
 
 
       ###Estimated Continuation Values:
-      Investment_Continuation_value <- Continuation_value(profit = Immediate_profit[t,],
+      investment_continuation_value <- continuation_value_calc(profit = Immediate_profit[t,],
                                                          t = t,
-                                                         Continuation_value = X_t  * discount(r),
-                                                         state.variables_t = state.variables[t,,],
+                                                         continuation_value = X_t  * discount(r),
+                                                         state_variables_t = state_variables[t,,],
                                                          orthogonal = orthogonal,
                                                          degree = degree,
-                                                         cross.product = cross.product)
+                                                         cross_product = cross_product)
 
     }
 
@@ -313,7 +313,7 @@ LSM.RealOption <- function(state.variables, NCF, CAPEX, dt, rf, construction = 0
     # #Now, the optimal decision at this time period is to either invest, and receive the
     # immediate profit subtract investment capital, delay your investment
     # because there's value in waiting, or just because there's no value at all.
-    Invest <- Immediate_profit[t,] > Investment_Continuation_value
+    Invest <- Immediate_profit[t,] > investment_continuation_value
 
     X_t[!Invest] <- X_t[!Invest] * discount(r)
     X_t[Invest] <- Immediate_profit[t,Invest]

@@ -1,19 +1,19 @@
 
-#' Value Operationally Flexible Capital Investment Projects Through Least-Squares Monte Carlo (LSM) Simulation:
+#' Value operationally flexible capital investment projects through least-squares Monte Carlo (LSM) simulation:
 #' @description
 #'
 #' Given a set of state variables and associated net cash flows for an investment project simulated through Monte Carlo simulation,
 #' solve for the real option value of a capital investment project that has the flexibility to temporarily suspend or permanently abandon operations
 #' through the least-squares Monte Carlo simulation method.
 #'
-#' @param state.variables \code{matrix} or \code{array}. The simulated states of the underlying stochastic variables. The first dimension corresponds to the simulated values
+#' @param state_variables \code{matrix} or \code{array}. The simulated states of the underlying stochastic variables. The first dimension corresponds to the simulated values
 #' of the state variables at each discrete observation point. The second dimension corresponds to each individual simulation of the state variable. The third dimension
 #' corresponds to each state variable considered.
 #' @param NCF The net cash flows resulting from operating the underlying capital investment project for one discrete time step at the current simulated values of the state variables.
 #' Each column corresponds to a simulated price path of underlying stochastic variables, and each row the net cash flows at a discrete time point for each simulated path.
-#' The dimensions of object 'NCF' must match the first two dimensions of the object passed to the 'state.variables' argument.
+#' The dimensions of object 'NCF' must match the first two dimensions of the object passed to the 'state_variables' argument.
 #' @param CAPEX \code{numeric} or \code{vector} object. The initial capital investment of the project. This value can be either constant or time dependent. When the 'CAPEX' argument
-#' is time dependent, it must be a vector object of length equal to the number of discrete observations of the simulations (i.e. the number of rows of both 'state.variables' and 'NCF')
+#' is time dependent, it must be a vector object of length equal to the number of discrete observations of the simulations (i.e. the number of rows of both 'state_variables' and 'NCF')
 #' @param dt Constant, discrete time step of simulated observations
 #' @param rf The annual risk-free interest rate
 #' @param construction An integer corresponding to the number of periods of construction of the underlying asset. The construction time represents the time between
@@ -21,20 +21,20 @@
 #' @param orthogonal \code{character}. The orthogonal polynomial used to develop basis functions that estimate the continuation value in the LSM simulation method.
 #' \code{orthogonal} arguments available are: "Power", "Laguerre", "Jacobi", "Legendre", "Chebyshev", "Hermite". See \bold{details}.
 #' @param degree The number of orthogonal polynomials used in the least-squares fit. See \bold{details}.
-#' @param cross.product \code{logical}. Should a cross product of state variables be considered? Relevant only when the number of state variables
+#' @param cross_product \code{logical}. Should a cross product of state variables be considered? Relevant only when the number of state variables
 #' is greater than one
-#' @param Suspend.CAPEX The cash flow resulting from suspending an operational project
-#' @param Suspend.OPEX the ongoing cash flow resulting from being suspended for one discrete time period
-#' @param Resume.CAPEX the cash flow resulting from resuming a suspended project
-#' @param Abandon.CAPEX the terminal cash flow resulting from permanently abandoning a project
-#' @param Save.States \code{logical}. Should the operational state of each simulated price path be returned? See \bold{values}.
+#' @param suspend_CAPEX The cash flow resulting from suspending an operational project
+#' @param suspend_OPEX the ongoing cash flow resulting from being suspended for one discrete time period
+#' @param resume_CAPEX the cash flow resulting from resuming a suspended project
+#' @param abandon_CAPEX the terminal cash flow resulting from permanently abandoning a project
+#' @param save_states \code{logical}. Should the operational state of each simulated price path be returned? See \bold{values}.
 #' @param verbose \code{logical}. Should additional information be output? See \bold{values}.
 #' @param debugging \code{logical} Should additional simulation information be output? See \bold{values}.
 #'
 #' @details
-#'The \code{LSM.RealOption.OF} function provides an implementation of the least-squares Monte Carlo (LSM) simulation approach to numerically approximate
+#'The \code{LSM_real_option_OF} function provides an implementation of the least-squares Monte Carlo (LSM) simulation approach to numerically approximate
 #'the value of capital investment projects considering the flexibility of timing of investment and operational states under stochastically evolving uncertainty. The function provides flexibility in the stochastic behavior of the underlying uncertainty, with simulated values
-#'of state variables provided within the \code{state.variables} argument. Multiple stochastically evolving uncertainties can also be considered. The \code{LSM.RealOption.OF} function also provides analysis into the
+#'of state variables provided within the \code{state_variables} argument. Multiple stochastically evolving uncertainties can also be considered. The \code{LSM_real_option_OF} function also provides analysis into the
 #'expected investment timing, probability, and operating modes of the project.
 #'
 #'\bold{Least-Squares Monte Carlo Simulation:}
@@ -54,12 +54,12 @@
 #'underlying, stochastically evolving uncertainty has revealed itself. Real options analysis treats investment into capital investment projects as an optimal stopping problem, optimizing the timing of investment that maximizes the payoffs of investment under underlying stochastic uncertainty.
 #'Real options analysis is also capable of evaluating the critical value of underlying state variables at which immediate investment into a project is optimal. See Dixit and Pindyck (1994) for more details of real options analysis.
 #'
-#'The \code{LSM.RealOption.OF} function considers the option to invest into a capital investment project within a finite forecasting horizon.
+#'The \code{LSM_real_option_OF} function considers the option to invest into a capital investment project within a finite forecasting horizon.
 #'Investment into the project results in accruing all future net cash flows (NCF) until the end of the forecasting horizon at the cost of the capital expenditure (CAPEX).
 #'
-#'The primary difference between the \code{LSM.RealOption} and \code{LSM.AmericanOption.OF} function is the way in which they evaluate the payoff of
-#'exercise of the American-style option. The \code{LSM.AmericanOption} function considers the payoff of exercise to be a one time payoff (i.e. buying or selling the security in a vanilla call or put option) corresponding to the respective payoff argument.
-#'The \code{LSM.RealOption.OF} function instead, at each discrete time period, for each simulated price path, compares the sum of all remaining discounted cash flows that are accrued following immediate investment into
+#'The primary difference between the \code{LSM_real_option} and \code{LSM_american_option} function is the way in which they evaluate the payoff of
+#'exercise of the American-style option. The \code{LSM_american_option} function considers the payoff of exercise to be a one time payoff (i.e. buying or selling the security in a vanilla call or put option) corresponding to the respective payoff argument.
+#'The \code{LSM_real_option_OF} function instead, at each discrete time period, for each simulated price path, compares the sum of all remaining discounted cash flows that are accrued following immediate investment into
 #'a project to the end of the forecasting horizon with the expected value of delaying investment. This is is known as the 'running present value' (RPV) of the project, which is the discretised present value of all
 #'future cash flows of the project. The RPV of a project increases as the size of the discrete time step decreases, highlighting the need
 #'for small discrete time steps to accurately value investment projects. This is due to the discounting effect of discounting larger
@@ -74,7 +74,7 @@
 #'Longstaff and Schwartz (2001) state that as the conditional expectation of the continuation value belongs to a Hilbert space,
 #'it can be represented by a combination of orthogonal basis functions. Increasing the number of stochastic state variables
 #'therefore increases the number of required basis functions exponentially. The orthogonal polynomials available in the
-#'\code{LSM.RealOptions} package are: Laguerre, Jacobi, Legendre (spherical), Hermite (probabilistic), Chebyshev (of the first kind).
+#'\code{LSM_real_options} package are: Laguerre, Jacobi, Legendre (spherical), Hermite (probabilistic), Chebyshev (of the first kind).
 #'The simple powers of state variables is further available. Explicit expressions of each of these orthogonal polynomials are
 #'available within the textbook of Abramowitz and Stegun (1965).
 #'
@@ -88,7 +88,7 @@
 #' high initial investment costs, long residual lifetimes of operations, high levels of volatility in underlying assets and net present
 #' values near zero.
 #'
-#' The operational flexibility supported by the \code{LSM.RealOption.OF} function is the ability to temporarily suspend and permanently
+#' The operational flexibility supported by the \code{LSM_real_option_OF} function is the ability to temporarily suspend and permanently
 #' abandon an operational investment project. The ability to temporarily suspend and permanently abandon operations was first presented
 #' in the prolific work of Brennan and Schwartz (1985), whom solved for the trigger values of suspension, resumption and abandonment of
 #' a finite natural resource investment under natural resource price uncertainty. The work of Cortazar, Gravet and Urzua (2008) solved
@@ -115,7 +115,7 @@
 #' model. The objective is to optimize the value of the project by taking the optimal set of decisions for the project operating mode
 #' at each time point under uncertainty.
 #'
-#' The 'LSM.RealOption.OF' function solves for the optimal switching problem at each discrete time point throughout the backward induction
+#' The 'LSM_real_option_OF' function solves for the optimal switching problem at each discrete time point throughout the backward induction
 #' process. For each operating mode, the immediate payoff of switching to a different operating mode is compared against the discounted 'continuation' value
 #' of staying in the current operating mode. These continuation values are directly estimated through least-squares regression of all simulated price paths (rather than just 'in-the-money' price paths, as is
 #' considered in the value of the option to delay the initial investment decision).
@@ -124,12 +124,12 @@
 #' greater than the expected continuation value.
 #'
 #' The introduction of operational flexibility to the LSM simulation method greatly increases the level of computational complexity and thus the
-#' \code{LSM.RealOption.OF} function is considerably slower than the \code{LSM.RealOption} function.
+#' \code{LSM_real_option_OF} function is considerably slower than the \code{LSM_real_option} function.
 #'
 #' @return
 #'
-#'The \code{LSM.RealOption.OF} function by default returns a \code{list} object containing 3 objects, with further objects returned within this list when the
-#' \code{Save.States}, \code{verbose} and \code{debugging} arguments are set to \code{TRUE}.
+#'The \code{LSM_real_option_OF} function by default returns a \code{list} object containing 3 objects, with further objects returned within this list when the
+#' \code{save_states}, \code{verbose} and \code{debugging} arguments are set to \code{TRUE}.
 #'
 #' The objects returned are:
 #' \tabular{ll}{
@@ -140,7 +140,7 @@
 #' \code{WOV} \tab  Waiting option value. The value of the option to delay initial investment into an investment project\cr
 #' }
 #'
-#' When \code{Save.States = TRUE}, an additional object is returned:
+#' When \code{save_states = TRUE}, an additional object is returned:
 #' \tabular{ll}{
 #'
 #' \code{Project States} \tab  A \code{data.frame} object detailing the proportion of simulated price paths in each operating state at each discrete time point\cr
@@ -187,26 +187,26 @@
 #'# Geometric Brownian Motion stochastic process:
 #'
 #'## Step 1 - Simulate asset prices:
-#'AssetPrices <- GBM.Simulate(n = 100, t = 10, mu = 0.05,
+#'asset_prices <- GBM_simulate(n = 100, t = 10, mu = 0.05,
 #'                          sigma = 0.2, S0 = 100, dt = 1/2)
 #'
 #'## Step 2 - Perform Real Option Analysis (ROA):
-#'ROA <- LSM.RealOption.OF(state.variables = AssetPrices,
-#'                      NCF = AssetPrices - 100,
+#'ROA <- LSM_real_option_OF(state_variables = asset_prices,
+#'                      NCF = asset_prices - 100,
 #'                      CAPEX = 1000,
 #'                      dt = 1/2,
 #'                      rf = 0.05,
-#'                      Suspend.CAPEX = 100,
-#'                      Suspend.OPEX = 10,
-#'                      Resume.CAPEX = 100,
-#'                      Abandon.CAPEX = 0
+#'                      suspend_CAPEX = 100,
+#'                      suspend_OPEX = 10,
+#'                      resume_CAPEX = 100,
+#'                      abandon_CAPEX = 0
 #'                      )
 #'
 #' @export
-LSM.RealOption.OF <- function(state.variables, NCF, CAPEX, dt, rf, construction = 0,
+LSM_real_option_OF <- function(state_variables, NCF, CAPEX, dt, rf, construction = 0,
                            orthogonal = "Laguerre", degree = 9,
-                           cross.product = TRUE,
-                           Suspend.CAPEX = NULL, Suspend.OPEX = NULL, Resume.CAPEX = NULL, Abandon.CAPEX = NULL, Save.States = FALSE,
+                           cross_product = TRUE,
+                           suspend_CAPEX = NULL, suspend_OPEX = NULL, resume_CAPEX = NULL, abandon_CAPEX = NULL, save_states = FALSE,
                            verbose = FALSE, debugging = FALSE){
 
   ###FUNCTION DEFINITIONS:
@@ -253,7 +253,7 @@ LSM.RealOption.OF <- function(state.variables, NCF, CAPEX, dt, rf, construction 
   }
 
   ###Estimated Continuation Values:
-  Continuation_value <- function(profit, t, Continuation_value, state.variables_t, orthogonal, degree, cross.product, moneyness){
+  continuation_value_calc <- function(profit, t, continuation_value, state_variables_t, orthogonal, degree, cross_product, moneyness){
 
     #We only consider the invest / delay investment decision for price paths that are in the money (ie. positive NPV):
     if(moneyness){
@@ -261,46 +261,46 @@ LSM.RealOption.OF <- function(state.variables, NCF, CAPEX, dt, rf, construction 
       ITM_length <- length(ITM)
     } else {
       ITM <- TRUE
-      ITM_length <- length(Continuation_value)
+      ITM_length <- length(continuation_value)
     }
 
 
     #Only regress paths In the money (ITM):
     if(ITM_length>0){
 
-      if(is.vector(state.variables_t)){
-        state.variables_t_ITM <- matrix(state.variables_t[ITM])
-        state.variables.ncol <- 1
+      if(is.vector(state_variables_t)){
+        state_variables_t_ITM <- matrix(state_variables_t[ITM])
+        state_variables.ncol <- 1
       } else {
-        state.variables.ncol <- ncol(state.variables_t)
-        state.variables_t_ITM <- matrix(state.variables_t[ITM,], ncol = state.variables.ncol)
+        state_variables.ncol <- ncol(state_variables_t)
+        state_variables_t_ITM <- matrix(state_variables_t[ITM,], ncol = state_variables.ncol)
       }
 
-      regression.matrix <- matrix(0, nrow = ITM_length, ncol = (1 + state.variables.ncol*degree + ifelse(cross.product, factorial(state.variables.ncol - 1),0)))
-      index <- state.variables.ncol+1
+      regression_matrix <- matrix(0, nrow = ITM_length, ncol = (1 + state_variables.ncol*degree + ifelse(cross_product, factorial(state_variables.ncol - 1),0)))
+      index <- state_variables.ncol+1
 
-      regression.matrix[,1:index] <- c(Continuation_value[ITM], state.variables_t_ITM)
+      regression_matrix[,1:index] <- c(continuation_value[ITM], state_variables_t_ITM)
       index <- index + 1
 
       ##The Independent_variables includes the actual values as well as their polynomial/orthogonal weights:
       Regression_data <- data.frame(matrix(0, nrow = ITM_length,
-                                          ncol = (state.variables.ncol*degree + ifelse(cross.product, factorial(state.variables.ncol - 1),0))), state.variables_t_ITM,
-                                   dependent_variable = Continuation_value[ITM])
+                                          ncol = (state_variables.ncol*degree + ifelse(cross_product, factorial(state_variables.ncol - 1),0))), state_variables_t_ITM,
+                                   dependent_variable = continuation_value[ITM])
 
       index <- 1
       #Basis Functions:
-      for(i in 1:state.variables.ncol){
+      for(i in 1:state_variables.ncol){
         for(n in 1:degree){
-          Regression_data[,index] <- orthogonal_weight(n, state.variables_t_ITM[,i], orthogonal)
+          Regression_data[,index] <- orthogonal_weight(n, state_variables_t_ITM[,i], orthogonal)
           index <- index + 1
         }
       }
 
       #Cross Product of state vectors:
-      if(cross.product){
-        for(i in 1:(state.variables.ncol-1)){
-          for(j in (i + 1):state.variables.ncol){
-            Regression_data[,index] <- state.variables_t_ITM[,i] * state.variables_t_ITM[,j]
+      if(cross_product && state_variables.ncol > 1){
+        for(i in 1:(state_variables.ncol-1)){
+          for(j in (i + 1):state_variables.ncol){
+            Regression_data[,index] <- state_variables_t_ITM[,i] * state_variables_t_ITM[,j]
             index <- index + 1
           }}
       }
@@ -310,9 +310,9 @@ LSM.RealOption.OF <- function(state.variables, NCF, CAPEX, dt, rf, construction 
 
       #if(any(is.na(LSM_regression$coefficients))) print("There are NA's present in the (complex) regression!")
       ##Assign fitted values
-      Continuation_value[ITM] <- LSM_regression$fitted.values
+      continuation_value[ITM] <- LSM_regression$fitted.values
     }
-    return(Continuation_value)
+    return(continuation_value)
   }
   #------------------------------------------------------------------------------
 
@@ -320,35 +320,35 @@ LSM.RealOption.OF <- function(state.variables, NCF, CAPEX, dt, rf, construction 
   r <- rf * dt
 
   #Number of discrete time periods:
-  nperiods <- dim(state.variables)[1]
+  nperiods <- dim(state_variables)[1]
   #Number of simulations:
-  G <- dim(state.variables)[2]
+  G <- dim(state_variables)[2]
 
   ## Error Catching:
-  if(length(CAPEX) > 1 && length(CAPEX) != nperiods) stop("length of object 'CAPEX' doe not equal 1 or dim(state.variables)[2]!")
+  if(length(CAPEX) > 1 && length(CAPEX) != nperiods) stop("length of object 'CAPEX' doe not equal 1 or dim(state_variables)[2]!")
   if(construction %% 1 > 0) stop("object 'construction' must be type 'integer'!")
-  if(nrow(state.variables) != nrow(NCF)) stop("Dimensions of object 'state.variables' does not match 'NCF'!")
+  if(nrow(state_variables) != nrow(NCF)) stop("Dimensions of object 'state_variables' does not match 'NCF'!")
 
-  if(any(class(state.variables) == "matrix")) state.variables <- array(state.variables, dim = c(nrow(state.variables), ncol(state.variables), 1))
+  if(any(class(state_variables) == "matrix")) state_variables <- array(state_variables, dim = c(nrow(state_variables), ncol(state_variables), 1))
 
   if(!(orthogonal %in% c("Power", "Laguerre", "Jacobi", "Legendre", "Chebyshev", "Hermite"))){
     stop("Invalid orthogonal argument! 'orthogonal' must be Power, Laguerre, Jacobi, Legendre, Chebyshev or Hermite")
   }
 
   ## If there's only 1 state variable, we cannot perform cross products
-  if(dim(state.variables)[3] == 1) cross.product <- FALSE
+  if(dim(state_variables)[3] == 1) cross_product <- FALSE
 
-  if(Save.States || debugging) verbose <- TRUE
+  if(save_states || debugging) verbose <- TRUE
 
   ## OF error catching:
-  if(!(!any(c(is.null(Suspend.CAPEX), is.null(Suspend.OPEX), is.null(Resume.CAPEX))) &&
-       !all(c(is.null(Suspend.CAPEX), is.null(Suspend.OPEX), is.null(Resume.CAPEX))))) stop("arguments 'Suspend.CAPEX', 'Resume.CAPEX' and 'Suspend.OPEX' must all be specified!")
+  if(!(!any(c(is.null(suspend_CAPEX), is.null(suspend_OPEX), is.null(resume_CAPEX))) &&
+       !all(c(is.null(suspend_CAPEX), is.null(suspend_OPEX), is.null(resume_CAPEX))))) stop("arguments 'suspend_CAPEX', 'resume_CAPEX' and 'suspend_OPEX' must all be specified!")
 
   ## If they are set to null (i.e. they're not being considered, make the cost of switching be insurmountably high)
-  if(is.null(Suspend.CAPEX)) Suspend.CAPEX <- - 1e20 else Suspend.CAPEX <- - Suspend.CAPEX
-  if(is.null(Suspend.OPEX))  Suspend.OPEX  <- - 1e20 else Suspend.OPEX  <- - Suspend.OPEX
-  if(is.null(Resume.CAPEX))  Resume.CAPEX  <- - 1e20 else Resume.CAPEX  <- - Resume.CAPEX
-  if(is.null(Abandon.CAPEX)) Abandon.CAPEX <- - 1e20 else Abandon.CAPEX <- - Abandon.CAPEX
+  if(is.null(suspend_CAPEX)) suspend_CAPEX <- - 1e20 else suspend_CAPEX <- - suspend_CAPEX
+  if(is.null(suspend_OPEX))  suspend_OPEX  <- - 1e20 else suspend_OPEX  <- - suspend_OPEX
+  if(is.null(resume_CAPEX))  resume_CAPEX  <- - 1e20 else resume_CAPEX  <- - resume_CAPEX
+  if(is.null(abandon_CAPEX)) abandon_CAPEX <- - 1e20 else abandon_CAPEX <- - abandon_CAPEX
 
   ####BEGIN LSM SIMULATION
 
@@ -359,7 +359,7 @@ LSM.RealOption.OF <- function(state.variables, NCF, CAPEX, dt, rf, construction 
   Immediate_profit  <- matrix(0, nrow = nperiods, ncol = G)
 
   #Expected value of waiting to invest. Compared with Immediate Profit to make investment decisions through dynamic programming.
-  Investment_Continuation_value <- rep(0, G)
+  Investment_continuation_value <- rep(0, G)
 
   #Option value of project, given that you can either delay investment or invest into an operational project:
   X_t <- rep(0, G)
@@ -376,10 +376,10 @@ LSM.RealOption.OF <- function(state.variables, NCF, CAPEX, dt, rf, construction 
   V_t <- NCF[nperiods,]
 
   ##Value of being suspended and the RPV of being suspended:
-  RPV.Suspended_t <- W_t <- rep(Suspend.OPEX * discount(r), G)
+  RPV.Suspended_t <- W_t <- rep(suspend_OPEX * discount(r), G)
 
   ## Project states? (computationally intensive)
-  if(Save.States){
+  if(save_states){
     ##Optimal future project states given that you are operational:
     State.operational <- matrix("", nrow = nperiods, ncol = G)
     State.operational[nperiods,] <- "Operational"
@@ -401,58 +401,58 @@ LSM.RealOption.OF <- function(state.variables, NCF, CAPEX, dt, rf, construction 
       ## Operational Flexibility:
 
       ### Estimated continuation value of being in the "Operational" state:
-      V_t <- Continuation_value(profit = 0,
+      V_t <- continuation_value_calc(profit = 0,
                          t = t,
-                         Continuation_value = V_t  * discount(r),
-                         state.variables_t = state.variables[t,,],
+                         continuation_value = V_t  * discount(r),
+                         state_variables_t = state_variables[t,,],
                          orthogonal = orthogonal,
                          degree = degree,
-                         cross.product = cross.product,
+                         cross_product = cross_product,
                          ## All price paths are considered
                          moneyness = FALSE)
 
       ### Estimated continuation value of being in the "Suspended" state:
-      W_t <- Continuation_value(profit = 0,
+      W_t <- continuation_value_calc(profit = 0,
                          t = t,
-                         Continuation_value = W_t  * discount(r),
-                         state.variables_t = state.variables[t,,],
+                         continuation_value = W_t  * discount(r),
+                         state_variables_t = state_variables[t,,],
                          orthogonal = orthogonal,
                          degree = degree,
-                         cross.product = cross.product,
+                         cross_product = cross_product,
                          ## All price paths are considered
                          moneyness = FALSE)
 
       #Cash Flows that result from Particular path dependent decisions:
       Remain_open     <-  NCF[t,] + V_t
-      Remain_closed   <-  Suspend.OPEX  + W_t
-      Closed_to_open  <-  Remain_open   + Resume.CAPEX
-      Open_to_closed  <-  Remain_closed + Suspend.CAPEX
+      Remain_closed   <-  suspend_OPEX  + W_t
+      Closed_to_open  <-  Remain_open   + resume_CAPEX
+      Open_to_closed  <-  Remain_closed + suspend_CAPEX
 
       ##Dynamic Programming:
       #Value of the operational project:
-      V_t <- pmax(Open_to_closed, Remain_open, Abandon.CAPEX)
+      V_t <- pmax(Open_to_closed, Remain_open, abandon_CAPEX)
       #Value of the suspended project:
-      W_t <- pmax(Closed_to_open, Remain_closed, Abandon.CAPEX)
+      W_t <- pmax(Closed_to_open, Remain_closed, abandon_CAPEX)
 
       ###Cash Flows that result from the real options exercised at each path:
 
       stay_open   <- V_t == Remain_open
       go_closed   <- V_t == Open_to_closed
-      bail_out    <- V_t == Abandon.CAPEX
+      bail_out    <- V_t == abandon_CAPEX
       open_up     <- W_t == Closed_to_open
       stay_closed <- W_t == Remain_closed
-      bail_bail   <- W_t == Abandon.CAPEX
+      bail_bail   <- W_t == abandon_CAPEX
 
       RPV_t[t,stay_open]    <- NCF[t,stay_open] + RPV_t[t+1,stay_open] * discount(r)
-      RPV_t[t,go_closed]    <- Suspend.OPEX  + Suspend.CAPEX  + RPV.Suspended_t[go_closed]  * discount(r)
-      RPV_t[t,bail_out]     <- Abandon.CAPEX
+      RPV_t[t,go_closed]    <- suspend_OPEX  + suspend_CAPEX  + RPV.Suspended_t[go_closed]  * discount(r)
+      RPV_t[t,bail_out]     <- abandon_CAPEX
 
-      RPV.Suspended_t[stay_closed] <- Suspend.OPEX + RPV.Suspended_t[stay_closed] * discount(r)
-      RPV.Suspended_t[open_up]     <- NCF[t,open_up] + Resume.CAPEX  + RPV_t [t+1,open_up] * discount(r)
-      RPV.Suspended_t[bail_bail]   <- Abandon.CAPEX
+      RPV.Suspended_t[stay_closed] <- suspend_OPEX + RPV.Suspended_t[stay_closed] * discount(r)
+      RPV.Suspended_t[open_up]     <- NCF[t,open_up] + resume_CAPEX  + RPV_t [t+1,open_up] * discount(r)
+      RPV.Suspended_t[bail_bail]   <- abandon_CAPEX
 
       ## Project states:
-      if(Save.States){
+      if(save_states){
 
         ##No state change:
         State.operational[t, stay_open]  <- "Operational"
@@ -475,13 +475,13 @@ LSM.RealOption.OF <- function(state.variables, NCF, CAPEX, dt, rf, construction 
       if(Investment_opportunity) Immediate_profit[t,] <- (RPV_t[t+construction,] * discount(r, construction)) - CAPEX[ifelse(length(CAPEX)>1, t,1)]
 
       ###Estimated Continuation Values:
-      Investment_Continuation_value <- Continuation_value(profit = Immediate_profit[t,],
+      Investment_continuation_value <- continuation_value_calc(profit = Immediate_profit[t,],
                                                          t = t,
-                                                         Continuation_value = X_t  * discount(r),
-                                                         state.variables_t = state.variables[t,,],
+                                                         continuation_value = X_t  * discount(r),
+                                                         state_variables_t = state_variables[t,,],
                                                          orthogonal = orthogonal,
                                                          degree = degree,
-                                                         cross.product = cross.product,
+                                                         cross_product = cross_product,
                                                          moneyness = TRUE)
 
     }
@@ -490,7 +490,7 @@ LSM.RealOption.OF <- function(state.variables, NCF, CAPEX, dt, rf, construction 
     # #Now, the optimal decision at this time period is to either invest, and receive the
     # immediate profit subtract investment capital, delay your investment
     # because there's value in waiting, or just because there's no value at all.
-    Invest <- Immediate_profit[t,] > Investment_Continuation_value
+    Invest <- Immediate_profit[t,] > Investment_continuation_value
 
     X_t[!Invest] <- X_t[!Invest] * discount(r)
     X_t[Invest]  <- Immediate_profit[t,Invest]
@@ -525,7 +525,7 @@ LSM.RealOption.OF <- function(state.variables, NCF, CAPEX, dt, rf, construction 
     E_NPV <-mean(colSums(NCF * exp(-r * 0:(nperiods - 1)))) * discount(r)  - CAPEX[1]
   }
 
-  output.list <- list(ROV = ROV, NPV.OF = NPV, NPV = E_NPV, WOV = WOV)
+  output.list <- list(ROV = ROV, `NPV OF` = NPV, NPV = E_NPV, WOV = WOV)
 
   if(!verbose)  return(output.list)
 
@@ -554,7 +554,7 @@ LSM.RealOption.OF <- function(state.variables, NCF, CAPEX, dt, rf, construction 
                                       `Cumulative Investment Prob` = Cum_Investment_Prob))
 
   ## Project states:
-  if(Save.States){
+  if(save_states){
 
     States.table <- matrix(0, nrow = nperiods, ncol = 5)
     colnames(States.table) <- c("Yet to Invest", "Under Construction", "Operational", "Suspended", "Abandoned")
@@ -584,7 +584,7 @@ LSM.RealOption.OF <- function(state.variables, NCF, CAPEX, dt, rf, construction 
                                       `Immediate Profit` = Immediate_profit,
                                       `Running Present Value` = RPV_t))
 
-  if(Save.States) output.list <- c(output.list, list(`Path Project States` = State.operational))
+  if(save_states) output.list <- c(output.list, list(`Path Project States` = State.operational))
 
 
   return(output.list)

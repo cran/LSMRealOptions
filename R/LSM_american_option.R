@@ -5,7 +5,7 @@
 #' Given a set of state variables and associated payoffs simulated through Monte Carlo simulation, solve for the value of an American-style call or put option through
 #' the least-squares Monte Carlo simulation method.
 #'
-#' @param state.variables \code{matrix} or \code{array}. The simulated states of the underlying stochastic variables. The first dimension corresponds to the simulated values
+#' @param state_variables \code{matrix} or \code{array}. The simulated states of the underlying stochastic variables. The first dimension corresponds to the simulated values
 #' of the state variables at each discrete observation point. The second dimension corresponds to each individual simulation of the state variable. The third dimension
 #' corresponds to each state variable considered.
 #' @param payoff \code{matrix} The payoff at each observation point resulting from exercise into the underlying asset. The first dimension corresponds to the simulated values
@@ -17,16 +17,16 @@
 #' @param orthogonal \code{character}. The orthogonal polynomial used to develop basis functions that estimate the continuation value in the LSM simulation method.
 #' \code{orthogonal} arguments available are: "Power", "Laguerre", "Jacobi", "Legendre", "Chebyshev", "Hermite". See \bold{details}.
 #' @param degree The number of orthogonal polynomials used in the least-squares fit. See \bold{details}.
-#' @param cross.product \code{logical}. Should a cross product of state variables be considered? Relevant only when the number of state variables
+#' @param cross_product \code{logical}. Should a cross product of state variables be considered? Relevant only when the number of state variables
 #' is greater than one.
 #' @param verbose \code{logical}. Should additional information be output? See \bold{values}.
 #'
 #' @details
 #'
-#'The \code{LSM.AmericanOption} function provides an implementation of the least-squares Monte Carlo (LSM) simulation approach to numerically approximate
+#'The \code{LSM_american_option} function provides an implementation of the least-squares Monte Carlo (LSM) simulation approach to numerically approximate
 #'the value of American-style options (options with early exercise opportunities). The function provides flexibility in the stochastic process followed by the underlying asset, with simulated values
-#'of stochastic processes provided within the \code{state.variables} argument. It also provides flexibility in the payoffs of the option, allowing for vanilla as well as more exotic options to be considered.
-#'\code{LSM.AmericanOption} also provides analysis into the exercise timing and probability of early exercise of the option.
+#'of stochastic processes provided within the \code{state_variables} argument. It also provides flexibility in the payoffs of the option, allowing for vanilla as well as more exotic options to be considered.
+#'\code{LSM_american_option} also provides analysis into the exercise timing and probability of early exercise of the option.
 #'
 #'\bold{Least-Squares Monte Carlo Simulation:}
 #'
@@ -39,7 +39,7 @@
 #'then directly estimates the continuation value of in-the-money simulation paths by "(regressing) the ex-post realized payoffs from
 #'continuation on functions of the values of the state variables" (Longstaff and Schwartz, 2001).
 #'
-#'The 'LSM.AmericanOption' function at each discrete time period, for each simulated price path, compares the payoff that results from immediate exercise of
+#'The 'LSM_american_option' function at each discrete time period, for each simulated price path, compares the payoff that results from immediate exercise of
 #'the option with the expected value of continuing to hold the option for subsequent periods. The payoff of immediate exercise is provided in the \code{payoff} argument and
 #'could take several different meanings depending upon the type of American-style option being valued (e.g. the current stock price, the maximum price between multiple assets, etc.).
 #'
@@ -61,13 +61,13 @@
 #'Longstaff and Schwartz (2001) state that as the conditional expectation of the continuation value belongs to a Hilbert space,
 #'it can be represented by a combination of orthogonal basis functions. Increasing the number of stochastic state variables
 #'therefore increases the number of required basis functions exponentially. The orthogonal polynomials available in the
-#'\code{LSM.RealOptions} package are: Laguerre, Jacobi, Legendre (spherical), Hermite (probabilistic), Chebyshev (of the first kind).
+#'\code{LSMRealOptions} package are: Laguerre, Jacobi, Legendre (spherical), Hermite (probabilistic), Chebyshev (of the first kind).
 #'The simple powers of state variables is further available. Explicit expressions of each of these orthogonal polynomials are
 #'available within the textbook of Abramowitz and Stegun (1965).
 #'
 #' @return
 #'
-#'The 'LSM.AmericanOption' function by default returns a \code{numeric} object corresponding to the calculated value of the American-style option.
+#'The 'LSM_american_option' function by default returns a \code{numeric} object corresponding to the calculated value of the American-style option.
 #'
 #'When \code{verbose = T}, 6 objects are returned within a \code{list} class object. The objects returned are:
 #'
@@ -93,19 +93,19 @@
 #'# Price a vanilla American put option on an asset that follows
 #'# Geometric Brownian Motion
 #'
-#'## Step 1 - Simulate stock prices:
-#'StockPrices <- GBM.Simulate(n = 100, t = 1, mu = 0.05,
+#'## Step 1 - simulate stock prices:
+#'stock_prices <- GBM_simulate(n = 100, t = 1, mu = 0.05,
 #'                          sigma = 0.2, S0 = 100, dt = 1/2)
 #'
 #'## Step 2 - Value the American put option:
-#'OptionValue <- LSM.AmericanOption(state.variables = StockPrices,
-#'                                  payoff = StockPrices,
+#'option_value <- LSM_american_option(state_variables = stock_prices,
+#'                                  payoff = stock_prices,
 #'                                  K = 100,
 #'                                  dt = 1/2,
 #'                                  rf = 0.05)
 #' @export
-LSM.AmericanOption <- function(state.variables, payoff, K, dt, rf,
-                               call = FALSE, orthogonal = "Power", degree = 2, cross.product = TRUE,
+LSM_american_option <- function(state_variables, payoff, K, dt, rf,
+                               call = FALSE, orthogonal = "Power", degree = 2, cross_product = TRUE,
                                verbose = FALSE){
 
   ###FUNCTION DEFINITIONS:
@@ -118,20 +118,20 @@ LSM.AmericanOption <- function(state.variables, payoff, K, dt, rf,
   #####orthogonal Polynomial Functions:
   orthogonal_polynomials = c("Laguerre", "Jacobi", "Legendre", "Chebyshev", "Hermite")
 
-  c_m = function(n, m, orthogonal, alpha_value, beta_value = 0){
+  c_m <- function(n, m, orthogonal, alpha_value, beta_value = 0){
     if(orthogonal == "Laguerre")  return((-1)^m * combination(n, n-m) * (1/factorial(m)))
     if(orthogonal == "Jacobi")    return(combination(n + alpha_value, m) * combination(n + beta_value, n - m))
     if(orthogonal == "Legendre")  return((-1)^m * combination(n, m) * combination(2*n - 2*m, n))
     if(orthogonal == "Chebyshev") return((-1)^m * factorial(n - m - 1) / (factorial(m) * factorial(n - 2*m)))
     if(orthogonal == "Hermite")   return((-1)^m / (factorial(m) * (2^m) * factorial(n - 2*m)))}
 
-  g_m_x = function(n, m, x, orthogonal){
+  g_m_x <- function(n, m, x, orthogonal){
     if(orthogonal == "Laguerre") return(x^m)
     if(orthogonal == "Jacobi")   return((x-1)^(n-m) * (x+1)^m)
     if(orthogonal == "Legendre" || orthogonal == "Hermite") return(x^(n-2*m))
     if(orthogonal == "Chebyshev") return((2*x) ^ (n-2*m))}
 
-  orthogonal_weight = function(n, x, orthogonal, alpha_value = 0, beta_value = 0){
+  orthogonal_weight <- function(n, x, orthogonal, alpha_value = 0, beta_value = 0){
 
     ##If the orthogonal is "Power" then we'll just return the power:
     if(orthogonal == "Power") return(x^n)
@@ -141,61 +141,57 @@ LSM.AmericanOption <- function(state.variables, payoff, K, dt, rf,
     index <- which(orthogonal_polynomials == orthogonal)
 
     N <- c(rep(n,2), rep(n/2, 3))[index]
-    if(N%%1 != 0) warning(paste("orthogonal weight rounded down from", N, "to", N-1))
+    if(N%%1 != 0) sprintf("warning: orthogonal weight rounded down from %i to %i", n, n-1)
     N <- floor(N)
     d_n <- c(1, rep(1/(2^n), 2), n/2, factorial(n))[index]
 
     output <- 0
-    for(m in 0:N){
+    for(m in 0:N) output = output + c_m(n,m, orthogonal, alpha_value, beta_value) * g_m_x(n, m, x, orthogonal)
 
-      output <- output + c_m(n,m, orthogonal, alpha_value, beta_value) * g_m_x(n, m, x, orthogonal)
-
-    }
     return(d_n * output)
   }
 
   ###Estimated Continuation Values:
-  Continuation_value <- function(profit, t, Continuation_value, state.variables_t, orthogonal, degree, cross.product){
+  continuation_value_calc <- function(ITM, t, continuation_value, state_variables_t, orthogonal, degree, cross_product){
 
     #We only consider the invest / delay investment decision for price paths that are in the money (ie. positive NPV):
-    ITM <- which(profit > 0)
     ITM_length <- length(ITM)
 
     #Only regress paths In the money (ITM):
     if(ITM_length>0){
 
-      if(is.vector(state.variables_t)){
-        state.variables_t_ITM <- matrix(state.variables_t[ITM])
-        state.variables.ncol <- 1
+      if(is.vector(state_variables_t)){
+        state_variables_t_ITM <- matrix(state_variables_t[ITM])
+        state_variables.ncol <- 1
       } else {
-        state.variables.ncol <- ncol(state.variables_t)
-        state.variables_t_ITM <- matrix(state.variables_t[ITM,], ncol = state.variables.ncol)
+        state_variables.ncol <- ncol(state_variables_t)
+        state_variables_t_ITM <- matrix(state_variables_t[ITM,], ncol = state_variables.ncol)
       }
 
-      regression.matrix <- matrix(0, nrow = ITM_length, ncol = (1 + state.variables.ncol*degree + ifelse(cross.product, factorial(state.variables.ncol - 1),0)))
-      index <- state.variables.ncol+1
-      regression.matrix[,1:index] <- c(Continuation_value[ITM], state.variables_t_ITM)
+      regression.matrix <- matrix(0, nrow = ITM_length, ncol = (1 + state_variables.ncol*degree + ifelse(cross_product, factorial(state_variables.ncol - 1),0)))
+      index <- state_variables.ncol+1
+      regression.matrix[,1:index] <- c(continuation_value[ITM], state_variables_t_ITM)
       index <- index + 1
 
       ##The Independent_variables includes the actual values as well as their polynomial/orthogonal weights:
       Regression_data <- data.frame(matrix(0, nrow = ITM_length,
-                                           ncol = (state.variables.ncol*degree + ifelse(cross.product, factorial(state.variables.ncol - 1),0))), state.variables_t_ITM,
-                                    dependent_variable = Continuation_value[ITM])
+                                           ncol = (state_variables.ncol*degree + ifelse(cross_product, factorial(state_variables.ncol - 1),0))), state_variables_t_ITM,
+                                    dependent_variable = continuation_value[ITM])
 
       index <- 1
       #Basis Functions:
-      for(i in 1:state.variables.ncol){
+      for(i in 1:state_variables.ncol){
         for(n in 1:degree){
-          Regression_data[,index] <- orthogonal_weight(n, state.variables_t_ITM[,i], orthogonal)
+          Regression_data[,index] <- orthogonal_weight(n, state_variables_t_ITM[,i], orthogonal)
           index <- index + 1
         }
       }
 
       #Cross Product of state vectors:
-      if(cross.product && state.variables.ncol>1){
-        for(i in 1:(state.variables.ncol-1)){
-          for(j in (i + 1):state.variables.ncol){
-            Regression_data[,index] <- state.variables_t_ITM[,i] * state.variables_t_ITM[,j]
+      if(cross_product && state_variables.ncol>1){
+        for(i in 1:(state_variables.ncol-1)){
+          for(j in (i + 1):state_variables.ncol){
+            Regression_data[,index] <- state_variables_t_ITM[,i] * state_variables_t_ITM[,j]
             index <- index + 1
           }}
       }
@@ -204,18 +200,17 @@ LSM.AmericanOption <- function(state.variables, payoff, K, dt, rf,
 
       #if(any(is.na(LSM_regression$coefficients))) print("There are NA's present in the (complex) regression!")
       ##Assign fitted values
-      Continuation_value[ITM] <- LSM_regression$fitted.values
+      continuation_value[ITM] <- LSM_regression$fitted.values
     }
-    return(Continuation_value)
+    return(continuation_value)
   }
-  #------------------------------------------------------------------------------
 
 
 
-  if(length(K) > 1 && length(K) != G) stop("length of object 'K' does not equal 1 or number of columns of 'state.variables'!")
-  if(nrow(state.variables) != nrow(payoff)) stop("Dimensions of object 'state.variables' does not match 'payoff'!")
+  if(length(K) > 1 && length(K) != G) stop("length of object 'K' does not equal 1 or number of columns of 'state_variables'!")
+  if(nrow(state_variables) != nrow(payoff)) stop("Dimensions of object 'state_variables' does not match 'payoff'!")
 
-  if(any(class(state.variables) == "matrix")) state.variables <- array(state.variables, dim = c(nrow(state.variables), ncol(state.variables), 1))
+  if(any(class(state_variables) == "matrix")) state_variables <- array(state_variables, dim = c(nrow(state_variables), ncol(state_variables), 1))
 
   if(!(orthogonal %in% c("Power", "Laguerre", "Jacobi", "Legendre", "Chebyshev", "Hermite"))){
     stop("Invalid orthogonal argument! 'orthogonal' must be Power, Laguerre, Jacobi, Legendre, Chebyshev or Hermite")
@@ -225,9 +220,9 @@ LSM.AmericanOption <- function(state.variables, payoff, K, dt, rf,
   r <- rf * dt
 
   # Number of discrete time periods:
-  nperiods <- dim(state.variables)[1]
+  nperiods <- dim(state_variables)[1]
   # Number of simulations:
-  G <- dim(state.variables)[2]
+  G <- dim(state_variables)[2]
 
 
   ####BEGIN LSM SIMULATION
@@ -236,17 +231,17 @@ LSM.AmericanOption <- function(state.variables, payoff, K, dt, rf,
   profit <- matrix(0, nrow = nperiods, ncol = G)
 
   # Continuation value: expected value of waiting to exercise. Compared with immediate profit to make exercise decisions through dynamic programming.
-  continuation.value <- rep(0, G)
+  continuation_value <- rep(0, G)
 
   #American option value of project, given that you can either delay or exercise:
-  X_t <- rep(0, G)
+  AOV <- rep(0, G)
 
   ##Optimal period of exercise is the earliest time that exercise is triggered. If no exercise, an NA is returned:
-  exercise.timing <- rep(NA, G)
+  exercise_timing <- rep(NA, G)
 
   ###Backwards induction loop
   for(t in nperiods:1){
-    #t is representitive of the index for time, but in reality the actual time period you're in is (t-1).
+    #t is representative of the index for time, but in reality the actual time period you're in is (t-1).
 
     ## STEP ONE:
     ### Forward foresight (high bias) - the Immediate payoff of exercising:
@@ -260,26 +255,38 @@ LSM.AmericanOption <- function(state.variables, payoff, K, dt, rf,
     ## STEP TWO:
 
     ### Estimated continuation values:
-    if(t < nperiods) continuation.value <- Continuation_value(profit = profit[t,],
-                                                         t = t,
-                                                         Continuation_value = X_t  * discount(r),
-                                                         state.variables_t = state.variables[t,,],
-                                                         orthogonal = orthogonal,
-                                                         degree = degree,
-                                                         cross.product = cross.product)
+    if(t < nperiods){
+
+      #We only consider the invest / delay investment decision for price paths that are in the money (ie. positive NPV):
+      ITM <- which(profit[t,] > 0)
+
+      #Only regress paths In the money (ITM):
+      if(length(ITM)>0){
+
+      continuation_value <- continuation_value_calc(ITM = ITM,
+                                               t = t,
+                                               continuation_value = AOV  * discount(r),
+                                               state_variables_t = state_variables[t,,],
+                                               orthogonal = orthogonal,
+                                               degree = degree,
+                                               cross_product = cross_product)
+      } else {
+        continuation_value <- AOV  * discount(r)
+      }
+    }
 
     ## STEP THREE:
 
     ### Dynamic programming:
-    exercise <- profit[t,] > continuation.value
+    exercise <- profit[t,] > continuation_value
 
     ## Discount existing values if not exercising
-    X_t[!exercise] <- X_t[!exercise] * discount(r)
+    AOV[!exercise] <- AOV[!exercise] * discount(r)
     ## Receive immediate profit if exercising
-    X_t[exercise] <- profit[t,exercise]
+    AOV[exercise] <- profit[t,exercise]
 
     ##Was the option exercised?
-    exercise.timing[exercise] <- t
+    exercise_timing[exercise] <- t
 
     ###Re-iterate:
   }
@@ -291,10 +298,10 @@ LSM.AmericanOption <- function(state.variables, payoff, K, dt, rf,
 
   # American option value: discounting payoffs back to time zero, averaging over all paths.
 
-  exercised_paths <- !is.na(exercise.timing)
-  exercise.period <- exercise.timing[exercised_paths]
+  exercised_paths <- !is.na(exercise_timing)
+  exercise_period <- exercise_timing[exercised_paths]
   itm_paths <- which(exercised_paths)
-  option_values[exercised_paths] <- profit[nperiods * (itm_paths-1) + exercise.period] * discount(r, exercise.period)
+  option_values[exercised_paths] <- profit[nperiods * (itm_paths-1) + exercise_period] * discount(r, exercise_period)
 
   # option value:
   ROV <- mean(option_values)
@@ -302,7 +309,7 @@ LSM.AmericanOption <- function(state.variables, payoff, K, dt, rf,
   if(!verbose)  return(ROV)
 
   # Verbose Outputs:
-  exercise.time <- (exercise.period-1)*dt
+  exercise_time <- (exercise_period-1)*dt
 
   return(list(
     ## Option value
@@ -310,12 +317,12 @@ LSM.AmericanOption <- function(state.variables, payoff, K, dt, rf,
     ## Option value standard error
     `Standard Error` = sqrt(stats::var(option_values) / G),
     ## expected exercise time
-    `Expected Timing` = mean(exercise.time),
+    `Expected Timing` = mean(exercise_time),
     ## exercise time standard error
-    `Expected Timing SE` = sqrt(stats::var(exercise.time) / G),
+    `Expected Timing SE` = sqrt(stats::var(exercise_time) / G),
     ## exercise prob.
     `Exercise Probability` = length(itm_paths) / G,
     ## cumulative exercise prob.
-    `Cumulative Exercise Probability` = cumsum(table(c(exercise.time, (0:(nperiods-1))*dt)) - 1) / G
+    `Cumulative Exercise Probability` = cumsum(table(c(exercise_time, (0:(nperiods-1))*dt)) - 1) / G
 ))
 }
