@@ -2,7 +2,7 @@
 % Please edit documentation in R/LSM_american_option.R
 \name{LSM_american_option}
 \alias{LSM_american_option}
-\title{Value American-Style Options Through Least-Squares Monte Carlo (LSM) Simulation}
+\title{Value American-style options through least-squares Monte Carlo (LSM) simulation}
 \usage{
 LSM_american_option(
   state_variables,

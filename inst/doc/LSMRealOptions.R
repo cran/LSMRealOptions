@@ -101,13 +101,14 @@ dt <- 1/12
 project_lifetime <- 10
 forecasting_periods <- seq(0, project_lifetime, dt)
 
-revenue_prices <- GBM_simulate(n = 1e3, t = project_lifetime, mu = 0.06, 
+revenue_prices <- GBM_simulate(n = 2e4, t = project_lifetime, mu = 0.06, 
                               sigma = 0.2, S0 = initial_price, dt = dt)
 
 # Step 2 - Evaluate cash flows:
 
 ## Fixed cash flow:
-FCF <- 1e4 * initial_price
+# FCF <- 1e4 * initial_price
+FCF <- 1e4 * 36
 
 ## Net cash flow is equal to variable cash flows subtract fixed cash flows:
 NCF <- (1e4 * revenue_prices - FCF) * dt
@@ -130,6 +131,7 @@ project_value <- LSM_real_option(state_variables = revenue_prices,
                               construction = construction,
                               verbose = TRUE)
 print(format(unlist(project_value[1:6]), big.mark = ","))
+
 
 ## -----------------------------------------------------------------------------
 ## Evaluate Project Value with OF through ROA:

@@ -1,4 +1,4 @@
-#' Value American-Style Options Through Least-Squares Monte Carlo (LSM) Simulation
+#' Value American-style options through least-squares Monte Carlo (LSM) simulation
 #'
 #' @description
 #'
@@ -107,6 +107,8 @@
 LSM_american_option <- function(state_variables, payoff, K, dt, rf,
                                call = FALSE, orthogonal = "Power", degree = 2, cross_product = TRUE,
                                verbose = FALSE){
+
+  if(anyNA(state_variables)) stop("NA's have been specified within 'state_variables'!")
 
   ###FUNCTION DEFINITIONS:
   #------------------------------------------------------------------------------

@@ -209,6 +209,8 @@ LSM_real_option_OF <- function(state_variables, NCF, CAPEX, dt, rf, construction
                            suspend_CAPEX = NULL, suspend_OPEX = NULL, resume_CAPEX = NULL, abandon_CAPEX = NULL, save_states = FALSE,
                            verbose = FALSE, debugging = FALSE){
 
+  if(anyNA(state_variables)) stop("NA's have been specified within 'state_variables'!")
+
   ###FUNCTION DEFINITIONS:
   #------------------------------------------------------------------------------
   #Continuous compounding discounting

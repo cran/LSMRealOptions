@@ -136,6 +136,8 @@ LSM_real_option <- function(state_variables, NCF, CAPEX, dt, rf, construction = 
                            orthogonal = "Laguerre", degree = 9, cross_product = TRUE,
                            verbose = FALSE, debugging = FALSE){
 
+  if(anyNA(state_variables)) stop("NA's have been specified within 'state_variables'!")
+
   ###FUNCTION DEFINITIONS:
   #------------------------------------------------------------------------------
   #Continuous compounding discounting
@@ -361,17 +363,18 @@ LSM_real_option <- function(state_variables, NCF, CAPEX, dt, rf, construction = 
 
   ##Now we need to look forward from the optimal timing
   ##PB:
-  PB <- rep(0, length(which(!is.na(Investment_timing))))
+  PB <- rep(0, sum(!is.na(Investment_timing)))
   j <- 1
+
   for(i in which(!is.na(Investment_timing))){
    ##When do the cumulative CF:
-   PB.j <- which(cumsum(NCF[(Investment_timing[i]+construction):nperiods, i]) > (- CAPEX[ifelse(length(CAPEX)>1, i, 1)]))[1]
+   PB.j <- which(cumsum(NCF[(Investment_timing[i]+construction):nperiods, i]) > (CAPEX[ifelse(length(CAPEX)>1, Investment_timing[i], 1)]))[1]
    if(length(PB.j) > 0) PB[j] <- construction + PB.j else PB[j] <- nperiods - Investment_timing[i]
    j <- j + 1
   }
   PB <- PB * dt
-  Expected_Payback_Period <- mean(PB)
-  se_Expected_Payback_Period <- sqrt(stats::var(PB) / G)
+  Expected_Payback_Period <- mean(PB, na.rm = TRUE)
+  se_Expected_Payback_Period <- sqrt(stats::var(PB, na.rm = TRUE) / sum(!is.na(Investment_timing)))
 
   output.list <- c(output.list, list( `ROV SE` = ROV_SE,
                                        `NPV SE` = NPV_SE,

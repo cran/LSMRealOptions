@@ -1,6 +1,6 @@
 Package: LSMRealOptions
 Title: Value American and Real Options Through LSM Simulation
-Version: 0.2.0
+Version: 0.2.1
 Authors@R: c(person("Thomas", "Aspinall", email = "tomaspinall2512@gmail.com", 
                   role = c("aut", "cre"),
                   comment = c(ORCID = "0000-0002-6968-1989")),
@@ -23,13 +23,12 @@ Description: The least-squares Monte Carlo (LSM) simulation method is a popular 
 Depends: R (>= 3.5.0)
 License: GPL-3
 Encoding: UTF-8
-RoxygenNote: 7.1.1.9000
+RoxygenNote: 7.1.1.9001
 Suggests: knitr, rmarkdown, ggplot2, dplyr, scales, NFCP
-Imports: stats, lifecycle
+Imports: stats
 VignetteBuilder: knitr
-RdMacros: lifecycle
 NeedsCompilation: no
-Packaged: 2021-05-04 06:51:22 UTC; Thomas Aspinall
+Packaged: 2021-06-26 10:04:23 UTC; Thomas Aspinall
 Author: Thomas Aspinall [aut, cre] (<https://orcid.org/0000-0002-6968-1989>),
   Adrian Gepp [aut] (<https://orcid.org/0000-0003-1666-5501>),
   Geoff Harris [aut] (<https://orcid.org/0000-0003-4284-8619>),
@@ -38,4 +37,4 @@ Author: Thomas Aspinall [aut, cre] (<https://orcid.org/0000-0002-6968-1989>),
   Bruce Vanstone [aut] (<https://orcid.org/0000-0002-3977-2468>)
 Maintainer: Thomas Aspinall <tomaspinall2512@gmail.com>
 Repository: CRAN
-Date/Publication: 2021-05-04 07:20:03 UTC
+Date/Publication: 2021-06-26 10:30:02 UTC

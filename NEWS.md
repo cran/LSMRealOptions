@@ -1,3 +1,7 @@
+# LSMRealOptions 0.2.1
+
+- Deprecated function names removed.
+
 # LSMRealOptions 0.2.0
 
 - Added the 'IGBM_simulate' and 'GOU_simulate' functions

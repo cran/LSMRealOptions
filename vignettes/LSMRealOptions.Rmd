@@ -178,13 +178,14 @@ dt <- 1/12
 project_lifetime <- 10
 forecasting_periods <- seq(0, project_lifetime, dt)
 
-revenue_prices <- GBM_simulate(n = 1e3, t = project_lifetime, mu = 0.06, 
+revenue_prices <- GBM_simulate(n = 2e4, t = project_lifetime, mu = 0.06, 
                               sigma = 0.2, S0 = initial_price, dt = dt)
 
 # Step 2 - Evaluate cash flows:
 
 ## Fixed cash flow:
-FCF <- 1e4 * initial_price
+# FCF <- 1e4 * initial_price
+FCF <- 1e4 * 36
 
 ## Net cash flow is equal to variable cash flows subtract fixed cash flows:
 NCF <- (1e4 * revenue_prices - FCF) * dt
@@ -207,6 +208,7 @@ project_value <- LSM_real_option(state_variables = revenue_prices,
                               construction = construction,
                               verbose = TRUE)
 print(format(unlist(project_value[1:6]), big.mark = ","))
+
 ```
 
 The 'ROV' is also often referred to as the real option net present value (RO NPV) and is the average discounted payoffs of each price path when investment is exercised at the optimal time calculated through the backward induction process. The NPV is the average of the discounted payoffs considering immediate investment and is a numeric approximation of the standard NPV approach. The 'WOV' is the waiting option value, which is the difference between the 'ROV' and the 'NPV'. The 'WOV' is considered the value of the option to delay initial investment, allowing for future uncertainty in price paths to reveal themselves. When the 'WOV' is greater than zero, the optimal investment decision is to delay investment, as immediate investment would result in the loss of the 'WOV'.
